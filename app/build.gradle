@@ -1,0 +1,64 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'com.funnydevs.hilt-conductor.plugin'
+    id 'dagger.hilt.android.plugin'
+}
+
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId "com.funnydevs.hilt_conductor.demo"
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation project(":library")
+    implementation libraries.conductor
+    implementation libraries.kotlin
+    implementation libraries.appcompat
+    implementation libraries.hilt_android
+    implementation libraries.material
+
+
+    kapt project(":processor")
+    kapt libraries.hilt_android_compiler
+
+
+}
+
+afterEvaluate {
+    android.applicationVariants.all { variant ->
+        def kotlinGenerated = file("$buildDir/tmp/kapt/${variant.name}/kotlinGenerated")
+        variant.addJavaSourceFoldersToModel(kotlinGenerated)
+        return
+    }
+}

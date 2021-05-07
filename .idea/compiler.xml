@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel target="1.7">
+      <module name="Hilt-Conductor.app" target="1.8" />
+      <module name="Hilt-Conductor.buildSrc" target="1.8" />
+      <module name="Hilt-Conductor.hilt-conductor-plugin" target="1.8" />
+      <module name="Hilt-Conductor.library" target="1.8" />
+      <module name="Hilt-Conductor.plugin2" target="1.8" />
+      <module name="Hilt-Conductor.processor" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

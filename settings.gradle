@@ -1,0 +1,6 @@
+include ':plugin'
+include ':library'
+include ':processor'
+include ':annotations'
+include ':app'
+rootProject.name = "Hilt-Conductor"
