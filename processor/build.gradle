@@ -48,19 +48,5 @@ publishing {
 
 
     }
-
-    repositories {
-        maven {
-            name 'intellitronika'
-            url "http://0.0.0.0:80"
-            credentials {
-                username = 'root'
-                password = 'xIPq8SX5FfA7snHJGWZTiQanMS5Z2rKsJl95POupVHyKWR165tObUvXCa568TgEG'
-            }
-            authentication {
-                basic(BasicAuthentication)
-            }
-        }
-
-    }
+    
 }
