@@ -46,9 +46,9 @@ dependencies {
 publishing {
     publications {
         release(MavenPublication) {
-            version '0.1.0'
-            groupId 'com.funnydevs.hilt-conductor'
-            artifactId 'hilt-conductor'
+            version VERSION
+            groupId GROUP
+            artifactId ARTIFACT
         }
 
 

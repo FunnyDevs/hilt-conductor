@@ -1,6 +1,9 @@
-apply plugin: 'java-library'
-apply plugin: 'maven-publish'
-apply plugin: 'kotlin'
+
+plugins {
+    id 'java-library'
+    id 'kotlin'
+    id "maven-publish"
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
