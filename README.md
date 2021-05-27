@@ -20,6 +20,7 @@ Step 2. Apply plugin in application module of `build.gradle`.
 ```groovy
 plugins {
     ...
+    id 'com.funnydevs.hilt-conductor.plugin'
     id 'dagger.hilt.android.plugin'
 }
 ```
