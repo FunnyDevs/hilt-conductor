@@ -67,20 +67,21 @@ class HiltConductorTransformer(private val project: Project) : Transform() {
               .append(".${controllerClass.simpleName}_${field.fieldInfo.name.capitalize()}();\n")
         }
 
-
+        System.out.println("Valori" +injectableFields)
 
         var hiltInterface = "${controllerClass.packageName}.${controllerClass.simpleName}HiltInterface"
 
         controllerClass.declaredMethods.firstOrNull() { it.name == "onCreateView" }?.apply {
           this.insertAt(0,
             "com.funnydevs.hilt_conductor.ConductorInterface conductorInterface = " +
-            "dagger.hilt.android.EntryPointAccessors.fromApplication(getActivity()," +
+            "dagger.hilt.EntryPoints.get(getActivity()," +
             "com.funnydevs.hilt_conductor.ConductorInterface.class);\n" +
             "this.handler = conductorInterface.Conductor_LifeCycleHandler();\n" +
             "handler.inject(getActivity());\n"+
             "$hiltInterface hiltInterface = dagger.hilt.EntryPoints.get(handler,${hiltInterface}.class);\n"
             +injectableFields)
         }
+
 
         var onDestroyViewMethod = controllerClass.declaredMethods.firstOrNull { it.name == "onDestroyView" }
         if (onDestroyViewMethod == null){

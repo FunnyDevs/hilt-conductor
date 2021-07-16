@@ -3,6 +3,7 @@ plugins {
     id 'java-library'
     id 'kotlin'
     id "maven-publish"
+    id 'org.jetbrains.kotlin.jvm'
 }
 
 dependencies {
@@ -10,6 +11,7 @@ dependencies {
 
     implementation libraries.stdlib_j8
     implementation libraries.javax_inject
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 sourceCompatibility = "7"

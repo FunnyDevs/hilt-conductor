@@ -5,9 +5,12 @@ import android.app.Activity;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import dagger.hilt.android.components.ActivityComponent;
+import dagger.hilt.android.scopes.ActivityRetainedScoped;
+import dagger.hilt.android.scopes.ActivityScoped;
 import dagger.hilt.internal.GeneratedComponentManager;
 
-@Singleton
+@ActivityScoped
 public class ConductorComponentLifecycleHandler implements GeneratedComponentManager<ControllerComponent> {
 
     private ControllerComponent.Factory factory;
