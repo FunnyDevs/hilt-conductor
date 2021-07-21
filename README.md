@@ -60,4 +60,4 @@ fun text(): String = "Hello World"
 
 
 # Todo
-- [ ] Handling @Named qualifier
+- [ ] Handling class qualifier
