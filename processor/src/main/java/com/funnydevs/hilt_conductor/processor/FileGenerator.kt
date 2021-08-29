@@ -36,26 +36,29 @@ class FileGenerator : AbstractProcessor() {
       roundEnv.getElementsAnnotatedWith(Named::class.java)?.forEach { element ->
         var classType = element::class.members.let { members ->
           members.first { it.name == "owner" }.let { it.call(element) }
-        } as TypeElement
-        var controllerTypeClass = findIfHasControllerParent(classType)
+        } as? TypeElement
+        if (classType is TypeElement) {
+          var controllerTypeClass = findIfHasControllerParent(classType)
 
-        if (controllerTypeClass.toString().startsWith("com.bluelinelabs.conductor.Controller")) {
-          var classTypeName = classType.toString()
-          val value =
-            element.annotationMirrors.first { it.annotationType.asElement().simpleName.toString() == Named::class.simpleName.toString() }
-              .elementValues.values.iterator().next().toString()
+          if (controllerTypeClass.toString().startsWith("com.bluelinelabs.conductor.Controller")) {
+            var classTypeName = classType.toString()
+            val value =
+              element.annotationMirrors.first { it.annotationType.asElement().simpleName.toString() == Named::class.simpleName.toString() }
+                .elementValues.values.iterator().next().toString()
 
-          if (whereNamedList.firstOrNull { it.className == classTypeName } == null)
-            whereNamedList.add(WhereNamed(classTypeName))
+            if (whereNamedList.firstOrNull { it.className == classTypeName } == null)
+              whereNamedList.add(WhereNamed(classTypeName))
 
-          whereNamedList.first { it.className == classTypeName }
-            .fields.add(
-              WhereNamed.Field(
-              value = value,
-              name = element.simpleName.toString()
-                .replace("\$annotations", "")
-                .replace("get", "")
-            ))
+            whereNamedList.first { it.className == classTypeName }
+              .fields.add(
+                WhereNamed.Field(
+                  value = value,
+                  name = element.simpleName.toString()
+                    .replace("\$annotations", "")
+                    .replace("get", "")
+                )
+              )
+          }
         }
       }
 
@@ -63,18 +66,20 @@ class FileGenerator : AbstractProcessor() {
       roundEnv.getElementsAnnotatedWith(Inject::class.java)?.forEach { element ->
         var classType = element::class.members.let { members ->
           members.first { it.name == "owner" }.let { it.call(element) }
-        } as TypeElement
-        var controllerTypeClass = findIfHasControllerParent(classType)
+        } as? TypeElement
+        if (classType is TypeElement) {
+          var controllerTypeClass = findIfHasControllerParent(classType)
 
-        if (controllerTypeClass.toString().startsWith("com.bluelinelabs.conductor.Controller")) {
-          var classTypeName = classType.toString()
-          val fieldClassType = element.asType().toString()
-          if (whereInjectList.firstOrNull { it.className == classTypeName } == null)
-            whereInjectList.add(WhereInject(className = classTypeName))
+          if (controllerTypeClass.toString().startsWith("com.bluelinelabs.conductor.Controller")) {
+            var classTypeName = classType.toString()
+            val fieldClassType = element.asType().toString()
+            if (whereInjectList.firstOrNull { it.className == classTypeName } == null)
+              whereInjectList.add(WhereInject(className = classTypeName))
 
-          whereInjectList.first { it.className == classTypeName }
-            .fields.add(WhereInject.Field(fieldClassType,element.simpleName.toString()))
+            whereInjectList.first { it.className == classTypeName }
+              .fields.add(WhereInject.Field(fieldClassType,element.simpleName.toString()))
 
+          }
         }
       }
 
