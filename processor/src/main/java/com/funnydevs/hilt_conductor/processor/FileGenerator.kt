@@ -1,5 +1,6 @@
 package com.funnydevs.hilt_conductor.processor
 
+import com.funnydevs.hilt_conductor.annotations.ConductorEntryPoint
 import com.google.auto.service.AutoService
 import com.funnydevs.hilt_conductor.annotations.ControllerScoped
 import com.squareup.javapoet.*
@@ -33,55 +34,70 @@ class FileGenerator : AbstractProcessor() {
       return false
 
     try {
-      roundEnv.getElementsAnnotatedWith(Named::class.java)?.forEach { element ->
-        var classType = element::class.members.let { members ->
-          members.first { it.name == "owner" }.let { it.call(element) }
-        } as? TypeElement
-        if (classType is TypeElement) {
-          var controllerTypeClass = findIfHasControllerParent(classType)
+      roundEnv.getElementsAnnotatedWith(ConductorEntryPoint::class.java)?.forEach { rootElement ->
 
-          if (controllerTypeClass.toString().startsWith("com.bluelinelabs.conductor.Controller")) {
-            var classTypeName = classType.toString()
-            val value =
-              element.annotationMirrors.first { it.annotationType.asElement().simpleName.toString() == Named::class.simpleName.toString() }
-                .elementValues.values.iterator().next().toString()
+        val rootClassType = rootElement as TypeElement
+        roundEnv.getElementsAnnotatedWith(Named::class.java)?.forEach { namedElement ->
+          var classType = namedElement::class.members.let { members ->
+            members.first { it.name == "owner" }.let { it.call(namedElement) }
+          } as? TypeElement
+          if (classType is TypeElement) {
+            var controllerTypeClass = findIfHasControllerParent(classType)
 
-            if (whereNamedList.firstOrNull { it.className == classTypeName } == null)
-              whereNamedList.add(WhereNamed(classTypeName))
-
-            whereNamedList.first { it.className == classTypeName }
-              .fields.add(
-                WhereNamed.Field(
-                  value = value,
-                  name = element.simpleName.toString()
-                    .replace("\$annotations", "")
-                    .replace("get", "")
-                )
+            if (controllerTypeClass!= null &&
+              (   classType.toString() == rootClassType.superclass.toString() ||
+                  classType.toString() == rootClassType.toString()
               )
+            ) {
+              var classTypeName = rootClassType.toString()
+              val value =
+                namedElement.annotationMirrors.first { it.annotationType.asElement().simpleName.toString() == Named::class.simpleName.toString() }
+                  .elementValues.values.iterator().next().toString()
+
+              if (whereNamedList.firstOrNull { it.className == classTypeName } == null)
+                whereNamedList.add(WhereNamed(classTypeName))
+
+              whereNamedList.first { it.className == classTypeName }
+                .fields.add(
+                  WhereNamed.Field(
+                    value = value,
+                    name = namedElement.simpleName.toString()
+                      .replace("\$annotations", "")
+                      .replace("get", "")
+                  )
+                )
+            }
           }
         }
+
+
+        roundEnv.getElementsAnnotatedWith(Inject::class.java)?.forEach { injectElement ->
+          var classType = injectElement::class.members.let { members ->
+            members.first { it.name == "owner" }.let { it.call(injectElement) }
+          } as? TypeElement
+          if (classType is TypeElement) {
+            var controllerTypeClass = findIfHasControllerParent(classType)
+
+            if (controllerTypeClass!= null &&
+              (   classType.toString() == rootClassType.superclass.toString() ||
+                  classType.toString() == rootClassType.toString()
+              )
+            ) {
+              var classTypeName = rootClassType.toString()
+              val fieldClassType = injectElement.asType().toString()
+              if (whereInjectList.firstOrNull { it.className == classTypeName } == null)
+                whereInjectList.add(WhereInject(className = classTypeName))
+
+              whereInjectList.first { it.className == classTypeName }
+                .fields.add(WhereInject.Field(fieldClassType,injectElement.simpleName.toString()))
+
+            }
+          }
+        }
+
       }
 
 
-      roundEnv.getElementsAnnotatedWith(Inject::class.java)?.forEach { element ->
-        var classType = element::class.members.let { members ->
-          members.first { it.name == "owner" }.let { it.call(element) }
-        } as? TypeElement
-        if (classType is TypeElement) {
-          var controllerTypeClass = findIfHasControllerParent(classType)
-
-          if (controllerTypeClass.toString().startsWith("com.bluelinelabs.conductor.Controller")) {
-            var classTypeName = classType.toString()
-            val fieldClassType = element.asType().toString()
-            if (whereInjectList.firstOrNull { it.className == classTypeName } == null)
-              whereInjectList.add(WhereInject(className = classTypeName))
-
-            whereInjectList.first { it.className == classTypeName }
-              .fields.add(WhereInject.Field(fieldClassType,element.simpleName.toString()))
-
-          }
-        }
-      }
 
       generateInterfaces()
       build = true
@@ -94,16 +110,19 @@ class FileGenerator : AbstractProcessor() {
   }
 
 
-  private fun findIfHasControllerParent(typeElement: TypeElement): TypeElement {
+  private fun findIfHasControllerParent(typeElement: TypeElement): TypeElement? {
+
     try {
-      if (typeElement.superclass != null && !typeElement.superclass.toString().startsWith("java.lang.Object")) {
-        return findIfHasControllerParent((typeElement.superclass as DeclaredType).asElement() as TypeElement)
+      if (typeElement.superclass != null && typeElement.superclass.toString().startsWith("com.bluelinelabs.conductor.Controller")) {
+        return (typeElement.superclass as DeclaredType).asElement() as TypeElement
       }
+      else
+        return findIfHasControllerParent((typeElement.superclass as DeclaredType).asElement() as TypeElement)
     } catch (t: Throwable) {
       print(t.message)
     }
 
-    return typeElement
+    return null
   }
 
 

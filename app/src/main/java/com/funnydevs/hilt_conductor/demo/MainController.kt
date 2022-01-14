@@ -15,12 +15,8 @@ import javax.inject.Inject
 import javax.inject.Named
 
 @ConductorEntryPoint
-class MainController(args: Bundle?) : Controller(args) {
+class MainController(args: Bundle?) : BaseController(args) {
 
-
-    @Inject
-    @Named("first")
-    lateinit var testo: String
 
 
     override fun onCreateView(

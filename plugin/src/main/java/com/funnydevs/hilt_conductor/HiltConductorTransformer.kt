@@ -48,9 +48,16 @@ class HiltConductorTransformer(private val project: Project) : Transform() {
       ctClasses.first().classPool.get("com.bluelinelabs.conductor.Controller")
 
 
-    ctClasses
-      .filter { it.subclassOf(controllerClassFilter) && it.hasAnnotation("com.funnydevs.hilt_conductor.annotations.ConductorEntryPoint") }
+    val controllerClasses = getClasses(
+      controllerClassFilter,ctClasses
+    )
+
+
+    controllerClasses
+      .filter { it.hasAnnotation("com.funnydevs.hilt_conductor.annotations.ConductorEntryPoint") }
       .forEach { controllerClass ->
+
+        println(controllerClass.name)
 
         controllerClass.addField(
           CtField.make(
@@ -58,6 +65,7 @@ class HiltConductorTransformer(private val project: Project) : Transform() {
             controllerClass
           )
         )
+
 
         val injectableFields = StringBuilder()
         for (field in controllerClass.fields){
@@ -67,7 +75,6 @@ class HiltConductorTransformer(private val project: Project) : Transform() {
               .append(".${controllerClass.simpleName}_${field.fieldInfo.name.capitalize()}();\n")
         }
 
-        System.out.println("Valori" +injectableFields)
 
         var hiltInterface = "${controllerClass.packageName}.${controllerClass.simpleName}HiltInterface"
 
@@ -185,4 +192,16 @@ class HiltConductorTransformer(private val project: Project) : Transform() {
       }
     }
   }
+}
+
+
+private fun getClasses(
+  superClass: CtClass,
+  ctClasses: List<CtClass>): List<CtClass>{
+
+  return ctClasses.filter {
+    it.subclassOf(superClass)
+  }
+
+
 }
