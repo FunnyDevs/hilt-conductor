@@ -44,6 +44,10 @@ class HiltConductorTransformer(private val project: Project) : Transform() {
     /****************************************************************/
 
     val ctClasses = getClasses(transformInvocation)
+
+    if (ctClasses.isEmpty())
+      return
+
     val controllerClassFilter =
       ctClasses.first().classPool.get("com.bluelinelabs.conductor.Controller")
 
@@ -128,7 +132,6 @@ class HiltConductorTransformer(private val project: Project) : Transform() {
     val classPool = ClassPool(null)
     classPool.appendSystemPath()
     project.extensions.findByType(BaseExtension::class.java)?.bootClasspath?.forEach {
-      System.out.println("bootclasspath ${it.absolutePath}")
       classPool.appendClassPath(it.absolutePath)
     }
 
