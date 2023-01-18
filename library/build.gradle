@@ -35,6 +35,7 @@ dependencies {
 
     api project(":annotations")
     implementation libraries.hilt_android
+    implementation libraries.conductor
 
     annotationProcessor libraries.hilt_android_compiler
 

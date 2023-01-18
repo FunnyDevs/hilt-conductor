@@ -88,7 +88,7 @@ class HiltConductorTransformer(private val project: Project) : Transform() {
             "dagger.hilt.EntryPoints.get(getActivity()," +
             "com.funnydevs.hilt_conductor.ConductorInterface.class);\n" +
             "this.handler = conductorInterface.Conductor_LifeCycleHandler();\n" +
-            "handler.inject(getActivity());\n"+
+            "handler.inject(getActivity(),this);\n"+
             "$hiltInterface hiltInterface = dagger.hilt.EntryPoints.get(handler,${hiltInterface}.class);\n"
             +injectableFields)
         }
