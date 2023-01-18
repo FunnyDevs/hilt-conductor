@@ -2,6 +2,8 @@ package com.funnydevs.hilt_conductor;
 
 import android.app.Activity;
 
+import com.bluelinelabs.conductor.Controller;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -21,9 +23,10 @@ public class ConductorComponentLifecycleHandler implements GeneratedComponentMan
         this.factory = factory;
     }
 
-    public void inject(Activity activity) {
+    public void inject(Activity activity, Controller controller) {
         controllerComponent = factory
                 .activity(activity)
+                .controller(controller)
                 .create();
     }
 
