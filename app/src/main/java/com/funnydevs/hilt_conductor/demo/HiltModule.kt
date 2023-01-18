@@ -1,5 +1,6 @@
 package com.funnydevs.hilt_conductor.demo
 
+import com.bluelinelabs.conductor.Controller
 import com.funnydevs.hilt_conductor.ControllerComponent
 import com.funnydevs.hilt_conductor.annotations.ControllerScoped
 import dagger.Module
@@ -19,5 +20,7 @@ object HiltModule {
   @Provides
   @ControllerScoped
   @Named("second")
-  fun textTwo(): String = "Hello Moon"
+  fun textTwo(controller: Controller): String {
+    return "Hello Moon"
+  }
 }
