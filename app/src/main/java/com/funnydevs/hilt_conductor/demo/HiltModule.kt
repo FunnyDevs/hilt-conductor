@@ -6,6 +6,7 @@ import com.funnydevs.hilt_conductor.annotations.ControllerScoped
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Named
 
 @InstallIn(ControllerComponent::class)
@@ -20,7 +21,7 @@ object HiltModule {
   @Provides
   @ControllerScoped
   @Named("second")
-  fun textTwo(controller: Controller): String {
+  fun textTwo(): String {
     return "Hello Moon"
   }
 }
