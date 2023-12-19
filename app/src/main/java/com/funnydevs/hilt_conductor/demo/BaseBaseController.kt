@@ -9,5 +9,5 @@ abstract class BaseBaseController(args: Bundle?) : Controller(args) {
 
     @Inject
     @Named("second")
-    lateinit var testoo: String
+    lateinit var secondText: String
 }
