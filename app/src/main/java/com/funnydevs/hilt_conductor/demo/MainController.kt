@@ -18,7 +18,7 @@ class MainController(args: Bundle?) : BaseController(args) {
         savedViewState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.controller_main, container, false)
-        view.findViewById<TextView>(R.id.tv_test).text = testo + testoo
+        view.findViewById<TextView>(R.id.tv_test).text = "$text $secondText"
         return view
     }
 
